@@ -56,7 +56,7 @@ if __name__ == '__main__':
                         help='the username to attempt to auto-claim')
     parser.add_argument('delay', type=int,
                         help='interval between each request')
-    parser.add_argument('--proxies', type=str,
+    parser.add_argument('proxies', type=str,
                         help='the proxies file')
     args = parser.parse_args()
 
