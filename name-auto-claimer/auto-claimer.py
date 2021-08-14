@@ -54,8 +54,8 @@ if __name__ == '__main__':
         description='Repeatedly attempt to claim a Minecraft username that is predicted to be dropping')
     parser.add_argument('username', type=str,
                         help='the username to attempt to auto-claim')
-    parser.add_argument('delay', type=str,
-                        help='the password file')
+    parser.add_argument('delay', type=int,
+                        help='interval between each request')
     parser.add_argument('--proxies', type=str,
                         help='the proxies file')
     args = parser.parse_args()
