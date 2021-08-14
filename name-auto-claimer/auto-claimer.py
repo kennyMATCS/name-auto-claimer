@@ -44,7 +44,11 @@ def main(username: str, delay: int, proxies_file: str, credentials: str):
         if is_available(username, proxy):
             message(
                 f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
-            # check 4 name
+
+            bearer = authenticate(email, password)
+            change_name(username, bearer)
+            return
+
         else:
             message(
                 f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
@@ -71,6 +75,37 @@ def is_available(username: str, proxy: str) -> bool:
 
     if status_code != 200:
         return True
+    return False
+
+
+def authenticate(email: str, password: str) -> str:
+    authenticate_json = {'username': email, 'password': password}
+
+    headers = {
+        "Content-Type": "application/json",
+    }
+
+    response = requests.post('https://authserver.mojang.com/authenticate',
+                             json=authenticate_json, headers=headers)
+
+    if response.status_code == 200:
+        json = response.json()
+        bearer = json['accessToken']
+        return bearer
+
+    return 'none'
+
+
+def change_name(username: str, bearer: str) -> bool:
+    headers = {'Content-Type': 'application/json',
+               'Authorization': f'Bearer {bearer}'}
+
+    response = requests.put(
+        f'https://api.minecraftservices.com/minecraft/profile/name/{username}', headers=headers)
+
+    if response.status_code == 200:
+        return True
+
     return False
 
 
