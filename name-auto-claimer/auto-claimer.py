@@ -38,6 +38,17 @@ def message(message: str):
     print(f'{Fore.RESET}{message}')
 
 
+def is_available(username: str) -> bool:
+    endpoint = 'https://api.gapple.pw/status/'
+
+    response = requests.get(f'{endpoint}{username}')
+    status_code = response.status_code
+
+    if status_code == 200:
+        return True
+    return False
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Repeatedly attempt to claim a Minecraft username that is predicted to be dropping')
