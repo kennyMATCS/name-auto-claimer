@@ -60,13 +60,12 @@ def is_available(username: str, proxy: str) -> bool:
 
     proxy_dictionary = {
         'http': proxy,
-        'https': proxy.replace('http', 'https')
     }
 
     response = requests.get(f'{endpoint}{username}', proxies=proxy_dictionary)
     status_code = response.status_code
 
-    if status_code == 200:
+    if status_code != 200:
         return True
     return False
 
