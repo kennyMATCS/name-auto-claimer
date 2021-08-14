@@ -11,9 +11,13 @@ from colorama import Fore, init
 init()
 
 
-def main(username: str, delay: int, proxies_file: str):
+def main(username: str, delay: int, proxies_file: str, credentials: str):
     has_errors: bool = False
     proxies: list[str] = list()
+
+    account = credentials.split(':')
+    email = account[0]
+    password = account[1]
 
     if not exists(proxies_file):
         message(
@@ -79,10 +83,13 @@ if __name__ == '__main__':
                         help='interval between each request')
     parser.add_argument('proxies', type=str,
                         help='the proxies file')
+    parser.add_argument('credentials', type=str,
+                        help='the username:password combo')
     args = parser.parse_args()
 
     username: str = args.username
     delay: int = args.delay
     proxies_file: str = args.proxies
+    credentials: str = args.credentials
 
-    main(username, delay, proxies_file)
+    main(username, delay, proxies_file, credentials)
