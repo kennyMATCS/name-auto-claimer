@@ -47,6 +47,8 @@ def main(username: str, delay: int, proxies_file: str, credentials: str):
 
             bearer = authenticate(email, password)
             change_name(username, bearer)
+            message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+
             return
 
         else:
