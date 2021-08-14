@@ -2,6 +2,8 @@ import argparse
 import requests
 import time
 
+
+from datetime import datetime
 from os.path import exists
 from utils import get_proxy
 
@@ -32,10 +34,16 @@ def main(username: str, delay: int, proxies_file: str):
                     proxies.append(proxy)
 
     for proxy in proxies:
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+
         if is_available(username, proxy):
-            message('{Fore.LIGHTCYAN_EX}{username} is available!')
+            message(
+                f'{Fore.LIGHTGREEN_EX}{username} is available! ({current_time})')
+            # check 4 name
         else:
-            message('{Fore.LIGHTRED_EX}{username}{Fore.RESET}is not available!')
+            message(
+                f'{Fore.LIGHTRED_EX}{username}{Fore.RESET}is not available. ({current_time})')
 
         time.sleep(delay)
 
