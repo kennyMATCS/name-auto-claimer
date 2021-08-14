@@ -1,11 +1,41 @@
 import argparse
+import requests
+
+from os.path import exists
+from utils import get_proxy
 
 from colorama import Fore, init
 init()
 
 
 def main(username: str, delay: int, proxies_file: str):
-    pass
+    has_errors: bool = False
+    proxies: list[str] = list()
+
+    if not exists(proxies_file):
+        message(
+            f'{Fore.LIGHTRED_EX}Could not find the proxies file called {proxies_file}.')
+        has_errors = True
+    else:
+        with open(proxies_file) as file:
+            read_lines = file.readlines()
+            for i in range(0, len(read_lines)):
+                l = read_lines[i]
+                line = l.strip()
+
+                proxy: str = get_proxy(line)
+                if proxy == 'bad_proxy':
+                    message(
+                        f'{Fore.LIGHTRED_EX}{line} ({i + 1}) is not in a valid proxy format.')
+                else:
+                    proxies.append(proxy)
+
+    if has_errors:
+        return
+
+
+def message(message: str):
+    print(f'{Fore.RESET}{message}')
 
 
 if __name__ == '__main__':
