@@ -1,5 +1,6 @@
 import argparse
 import requests
+import time
 
 from os.path import exists
 from utils import get_proxy
@@ -30,6 +31,14 @@ def main(username: str, delay: int, proxies_file: str):
                 else:
                     proxies.append(proxy)
 
+    for proxy in proxies:
+        if is_available(username, proxy):
+            message('{Fore.LIGHTCYAN_EX}{username} is available!')
+        else:
+            message('{Fore.LIGHTRED_EX}{username}{Fore.RESET}is not available!')
+
+        time.sleep(delay)
+
     if has_errors:
         return
 
@@ -38,10 +47,15 @@ def message(message: str):
     print(f'{Fore.RESET}{message}')
 
 
-def is_available(username: str) -> bool:
+def is_available(username: str, proxy: str) -> bool:
     endpoint = 'https://api.gapple.pw/status/'
 
-    response = requests.get(f'{endpoint}{username}')
+    proxy_dictionary = {
+        'http': proxy,
+        'https': proxy.replace('http', 'https')
+    }
+
+    response = requests.get(f'{endpoint}{username}', proxies=proxy_dictionary)
     status_code = response.status_code
 
     if status_code == 200:
