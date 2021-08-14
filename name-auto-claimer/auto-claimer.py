@@ -39,11 +39,11 @@ def main(username: str, delay: int, proxies_file: str):
 
         if is_available(username, proxy):
             message(
-                f'{Fore.LIGHTGREEN_EX}{username} is available! ({current_time})')
+                f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
             # check 4 name
         else:
             message(
-                f'{Fore.LIGHTRED_EX}{username}{Fore.RESET}is not available. ({current_time})')
+                f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
 
         time.sleep(delay)
 
@@ -52,7 +52,7 @@ def main(username: str, delay: int, proxies_file: str):
 
 
 def message(message: str):
-    print(f'{Fore.RESET}{message}')
+    print(f'{Fore.RESET}{message}{Fore.RESET}')
 
 
 def is_available(username: str, proxy: str) -> bool:
