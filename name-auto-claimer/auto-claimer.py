@@ -37,28 +37,29 @@ def main(username: str, delay: int, proxies_file: str, credentials: str):
                 else:
                     proxies.append(proxy)
 
-    for proxy in proxies:
-        now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-
-        if is_available(username, proxy):
-            message(
-                f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
-
-            bearer = authenticate(email, password)
-            change_name(username, bearer)
-            message(f'{Fore.LIGHTGREEN_EX}Changed name!')
-
-            return
-
-        else:
-            message(
-                f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
-
-        time.sleep(delay)
-
     if has_errors:
         return
+
+    while True:
+        for proxy in proxies:
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+
+            if is_available(username, proxy):
+                message(
+                    f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
+
+                bearer = authenticate(email, password)
+                change_name(username, bearer)
+                message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+
+                return
+
+            else:
+                message(
+                    f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
+
+            time.sleep(delay)
 
 
 def message(message: str):
@@ -72,12 +73,8 @@ def is_available(username: str, proxy: str) -> bool:
         'http': proxy,
     }
 
-    try:
-        response = requests.get(
-            f'{endpoint}{username}', proxies=proxy_dictionary)
-    except Exception as e:
-        print(e)
-        return False
+    response = requests.get(
+        f'{endpoint}{username}', proxies=proxy_dictionary)
 
     status_code = response.status_code
 
