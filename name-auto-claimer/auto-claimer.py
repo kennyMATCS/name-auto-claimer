@@ -49,11 +49,11 @@ def main(username: str, delay: int, proxies_file: str, credentials: str, webhook
                     f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
 
                 bearer = authenticate(email, password)
-                result: bool = change_name(username, bearer)
-                if result:
-                    message(f'{Fore.LIGHTGREEN_EX}Changed name!')
-                else:
-                    message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
+#                result: bool = change_name(username, bearer)
+#                if result:
+#                    message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+#                else:
+#                    message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
 
                 post_webhook(username)
 
@@ -98,6 +98,7 @@ def authenticate(email: str, password: str) -> str:
     response = requests.post('https://authserver.mojang.com/authenticate',
                              json=authenticate_json, headers=headers)
 
+    print(response.text)
     if response.status_code == 200:
         json = response.json()
         bearer = json['accessToken']
