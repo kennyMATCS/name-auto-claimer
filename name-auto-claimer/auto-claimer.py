@@ -2,7 +2,6 @@ import argparse
 import requests
 import time
 
-
 from datetime import datetime
 from os.path import exists
 from utils import get_proxy
@@ -11,7 +10,7 @@ from colorama import Fore, init
 init()
 
 
-def main(username: str, delay: int, proxies_file: str, credentials: str):
+def main(username: str, delay: int, proxies_file: str, credentials: str, webhook: str):
     has_errors: bool = False
     proxies: list[str] = list()
 
@@ -50,8 +49,13 @@ def main(username: str, delay: int, proxies_file: str, credentials: str):
                     f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
 
                 bearer = authenticate(email, password)
-                change_name(username, bearer)
-                message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                result: bool = change_name(username, bearer)
+                if result:
+                    message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                else:
+                    message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
+
+                post_webhook(username)
 
                 return
 
@@ -84,7 +88,8 @@ def is_available(username: str, proxy: str) -> bool:
 
 
 def authenticate(email: str, password: str) -> str:
-    authenticate_json = {'username': email, 'password': password}
+    authenticate_json = {'agent': {'name': 'Minecraft',
+                                   'version': 1}, 'username': email, 'password': password}
 
     headers = {
         "Content-Type": "application/json",
@@ -108,10 +113,24 @@ def change_name(username: str, bearer: str) -> bool:
     response = requests.put(
         f'https://api.minecraftservices.com/minecraft/profile/name/{username}', headers=headers)
 
+    print(response.text)
     if response.status_code == 200:
         return True
 
     return False
+
+
+def post_webhook(username: str):
+    webhook_design = {
+        'embeds': [
+            {
+                'title': f'{username} has dropped!',
+                'color': 0XFFD728,
+                'description': f'<@537321481940500480> \nName has dropped!',
+            }
+        ]
+    }
+    requests.post(webhook, json=webhook_design)
 
 
 if __name__ == '__main__':
@@ -125,11 +144,14 @@ if __name__ == '__main__':
                         help='the proxies file')
     parser.add_argument('credentials', type=str,
                         help='the username:password combo')
+    parser.add_argument('--webhook', type=str,
+                        help='the webhook url')
     args = parser.parse_args()
 
     username: str = args.username
     delay: int = args.delay
     proxies_file: str = args.proxies
     credentials: str = args.credentials
+    webhook: str = args.webhook
 
-    main(username, delay, proxies_file, credentials)
+    main(username, delay, proxies_file, credentials, webhook)
