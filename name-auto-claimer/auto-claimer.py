@@ -48,14 +48,16 @@ def main(username: str, delay: int, proxies_file: str, credentials: str, webhook
                 message(
                     f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
 
+                print()
                 bearer = authenticate(email, password)
-#                result: bool = change_name(username, bearer)
-#                if result:
-#                    message(f'{Fore.LIGHTGREEN_EX}Changed name!')
-#                else:
-#                    message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
+                result: bool = change_name(username, bearer)
+                if result:
+                    message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                else:
+                    message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
 
                 post_webhook(username)
+                print()
 
                 return
 
@@ -99,6 +101,7 @@ def authenticate(email: str, password: str) -> str:
                              json=authenticate_json, headers=headers)
 
     print(response.text)
+    print()
     if response.status_code == 200:
         json = response.json()
         bearer = json['accessToken']
@@ -115,6 +118,7 @@ def change_name(username: str, bearer: str) -> bool:
         f'https://api.minecraftservices.com/minecraft/profile/name/{username}', headers=headers)
 
     print(response.text)
+    print()
     if response.status_code == 200:
         return True
 
