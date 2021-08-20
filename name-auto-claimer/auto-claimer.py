@@ -1,6 +1,7 @@
 import argparse
 import requests
 import time
+import configparser
 
 from datetime import datetime
 from os.path import exists
@@ -9,8 +10,14 @@ from utils import get_proxy
 from colorama import Fore, init
 init()
 
+config = configparser.ConfigParser()
+config.read('config.ini')
 
-def main(username: str, delay: int, proxies_file: str, credentials: str, webhook: str):
+WEBHOOK = config['discord']['webhook']
+DELAY = int(config['delay']['interval'])
+
+
+def main(username: str, proxies_file: str, credentials: str):
     has_errors: bool = False
     proxies: list[str] = list()
 
@@ -65,7 +72,7 @@ def main(username: str, delay: int, proxies_file: str, credentials: str, webhook
                 message(
                     f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
 
-            time.sleep(delay)
+            time.sleep(DELAY)
 
 
 def message(message: str):
@@ -135,7 +142,7 @@ def post_webhook(username: str):
             }
         ]
     }
-    requests.post(webhook, json=webhook_design)
+    requests.post(WEBHOOK, json=webhook_design)
 
 
 if __name__ == '__main__':
@@ -143,20 +150,14 @@ if __name__ == '__main__':
         description='Repeatedly attempt to claim a Minecraft username that is predicted to be dropping')
     parser.add_argument('username', type=str,
                         help='the username to attempt to auto-claim')
-    parser.add_argument('delay', type=int,
-                        help='interval between each request')
     parser.add_argument('proxies', type=str,
                         help='the proxies file')
     parser.add_argument('credentials', type=str,
                         help='the username:password combo')
-    parser.add_argument('--webhook', type=str,
-                        help='the webhook url')
     args = parser.parse_args()
 
     username: str = args.username
-    delay: int = args.delay
     proxies_file: str = args.proxies
     credentials: str = args.credentials
-    webhook: str = args.webhook
 
-    main(username, delay, proxies_file, credentials, webhook)
+    main(username, proxies_file, credentials)
