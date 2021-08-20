@@ -17,13 +17,23 @@ WEBHOOK = config['discord']['webhook']
 DELAY = int(config['delay']['interval'])
 
 
-def main(username: str, proxies_file: str, credentials: str):
+def main(username: str, proxies_file: str, credentials: str, bearer: str):
     has_errors: bool = False
     proxies: list[str] = list()
 
-    account = credentials.split(':')
-    email = account[0]
-    password = account[1]
+    if not credentials is None and not bearer is None:
+        message(
+            f'{Fore.LIGHTRED_EX}You cannot use both a bearer token and credentials.')
+        has_errors = True
+    elif credentials is None and bearer is None:
+        message(
+            f'{Fore.LIGHTRED_EX}You must specify either a bearer toekn or credentials.')
+        has_errors = True
+
+    if not credentials is None:
+        account = credentials.split(':')
+        email = account[0]
+        password = account[1]
 
     if not exists(proxies_file):
         message(
@@ -55,16 +65,19 @@ def main(username: str, proxies_file: str, credentials: str):
                 message(
                     f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
 
+                post_webhook(username)
                 print()
-                bearer = authenticate(email, password)
+
+                if bearer is None:
+                    bearer = authenticate(email, password)
+
                 result: bool = change_name(username, bearer)
+
                 if result:
                     message(f'{Fore.LIGHTGREEN_EX}Changed name!')
                 else:
                     message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
-
-                post_webhook(username)
-                print()
+                    print()
 
                 return
 
@@ -152,12 +165,15 @@ if __name__ == '__main__':
                         help='the username to attempt to auto-claim')
     parser.add_argument('proxies', type=str,
                         help='the proxies file')
-    parser.add_argument('credentials', type=str,
+    parser.add_argument('--credentials', type=str,
                         help='the username:password combo')
+    parser.add_argument('--bearer' type=str,
+                        help='the bearer token')
     args = parser.parse_args()
 
     username: str = args.username
     proxies_file: str = args.proxies
     credentials: str = args.credentials
+    bearer: str = args.credentials
 
-    main(username, proxies_file, credentials)
+    main(username, proxies_file, credentials, bearer)
