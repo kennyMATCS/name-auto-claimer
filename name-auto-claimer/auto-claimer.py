@@ -73,7 +73,7 @@ def message(message: str):
 
 
 def is_available(username: str, proxy: str) -> bool:
-    endpoint = 'https://api.gapple.pw/status/'
+    endpoint = 'https://api.mojang.com/users/profiles/minecraft/'
 
     proxy_dictionary = {
         'http': proxy,
