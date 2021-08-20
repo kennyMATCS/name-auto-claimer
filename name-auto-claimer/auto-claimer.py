@@ -64,8 +64,8 @@ def main(username: str, proxies_file: str, credentials: str, bearer: str):
             if is_available(username, proxy):
                 message(
                     f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
-
                 post_webhook(username)
+
                 print()
 
                 if bearer is None:
@@ -167,13 +167,13 @@ if __name__ == '__main__':
                         help='the proxies file')
     parser.add_argument('--credentials', type=str,
                         help='the username:password combo')
-    parser.add_argument('--bearer' type=str,
+    parser.add_argument('--bearer', type=str,
                         help='the bearer token')
     args = parser.parse_args()
 
     username: str = args.username
     proxies_file: str = args.proxies
     credentials: str = args.credentials
-    bearer: str = args.credentials
+    bearer: str = args.bearer
 
     main(username, proxies_file, credentials, bearer)
