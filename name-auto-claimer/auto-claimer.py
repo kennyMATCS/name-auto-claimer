@@ -69,8 +69,9 @@ def main(username: str, proxies_file: str, credentials: str, bearer: str):
 
                 if bearer is None:
                     bearer = authenticate(email, password)
-
-                result: bool = change_name(username, bearer)
+                    result: bool = change_name(username, bearer)
+                else:
+                    result: bool = create_profile(username, bearer)
 
                 if result:
                     message(f'{Fore.LIGHTGREEN_EX}Changed name!')
@@ -135,6 +136,23 @@ def authenticate(email: str, password: str) -> str:
         return bearer
 
     return 'none'
+
+
+def create_profile(username: str, bearer: str) -> bool:
+    headers = {'Accept': 'application/json', 'Content-Type': 'application/json',
+               'Authorization': f'Bearer {bearer}'}
+
+    json = {'profileName': f'{username}'}
+
+    response = requests.post(
+        f'https://api.minecraftservices.com/minecraft/profile/', headers=headers, json=json)
+
+    print(response.text)
+    print()
+    if response.status_code == 200:
+        return True
+
+    return False
 
 
 def change_name(username: str, bearer: str) -> bool:
