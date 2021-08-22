@@ -27,7 +27,7 @@ def main(username: str, proxies_file: str, credentials: str, bearer: str):
         has_errors = True
     elif credentials is None and bearer is None:
         message(
-            f'{Fore.LIGHTRED_EX}You must specify either a bearer toekn or credentials.')
+            f'{Fore.LIGHTRED_EX}You must specify either a bearer token or credentials.')
         has_errors = True
 
     if not credentials is None:
