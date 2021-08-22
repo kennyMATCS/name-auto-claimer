@@ -64,7 +64,6 @@ def main(username: str, proxies_file: str, credentials: str, bearer: str):
             if is_available(username, proxy):
                 message(
                     f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
-                post_webhook(username)
 
                 print()
 
@@ -78,6 +77,8 @@ def main(username: str, proxies_file: str, credentials: str, bearer: str):
                 else:
                     message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
                     print()
+
+                post_webhook(username)
 
                 return
 
@@ -153,15 +154,19 @@ def change_name(username: str, bearer: str) -> bool:
 
 def post_webhook(username: str):
     webhook_design = {
+        'content': '<@537321481940500480> <@229030852607213569>',
         'embeds': [
             {
                 'title': f'{username} has dropped!',
                 'color': 0XFFD728,
-                'description': f'<@537321481940500480> \nName has dropped!',
+                'description': '\nName has dropped!',
             }
         ]
     }
-    requests.post(WEBHOOK, json=webhook_design)
+
+    for _ in range(10):
+        requests.post(WEBHOOK, json=webhook_design)
+        time.sleep(1)
 
 
 if __name__ == '__main__':
