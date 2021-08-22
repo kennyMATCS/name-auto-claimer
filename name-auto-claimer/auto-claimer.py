@@ -99,13 +99,19 @@ def is_available(username: str, proxy: str) -> bool:
         'http': proxy,
     }
 
-    response = requests.get(
-        f'{endpoint}{username}', proxies=proxy_dictionary)
+    try:
+        response = requests.get(
+            f'{endpoint}{username}', proxies=proxy_dictionary)
 
-    status_code = response.status_code
+        status_code = response.status_code
 
-    if status_code != 200:
-        return True
+        if status_code != 200:
+            return True
+        return False
+
+    except Exception:
+        message(f'{Fore.LIGHTRED_EX}Exception given, retrying...')
+
     return False
 
 
