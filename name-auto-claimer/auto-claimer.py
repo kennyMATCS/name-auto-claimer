@@ -14,10 +14,9 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 WEBHOOK = config['discord']['webhook']
-DELAY = int(config['delay']['interval'])
 
 
-def main(username: str, proxies_file: str, credentials: str, bearer: str):
+def main(username: str, delay: int, proxies_file: str, credentials: str, bearer: str, no_availability_check: bool):
     has_errors: bool = False
     proxies: list[str] = list()
 
@@ -92,7 +91,7 @@ def main(username: str, proxies_file: str, credentials: str, bearer: str):
                 message(
                     f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
 
-            time.sleep(DELAY)
+            time.sleep(delay)
 
 
 def message(message: str):
@@ -197,17 +196,24 @@ if __name__ == '__main__':
         description='Repeatedly attempt to claim a Minecraft username that is predicted to be dropping')
     parser.add_argument('username', type=str,
                         help='the username to attempt to auto-claim')
+    parser.add_argument('delay', type=int,
+                        help='the delay between each request')
     parser.add_argument('proxies', type=str,
                         help='the proxies file')
-    parser.add_argument('--credentials', type=str,
+    parser.add_argument('--credentials', '-c', type=str,
                         help='the username:password combo')
-    parser.add_argument('--bearer', type=str,
+    parser.add_argument('--bearer', '-b', type=str,
                         help='the bearer token')
+    parser.add_argument('--no-availability-check', '-n', action='store_true',
+                        help='stop checking for name availability and just send namechange requests')
+
     args = parser.parse_args()
 
     username: str = args.username
+    delay: int = args.delay
     proxies_file: str = args.proxies
     credentials: str = args.credentials
     bearer: str = args.bearer
+    no_availability_check: bool = args.no_availability_check
 
-    main(username, proxies_file, credentials, bearer)
+    main(username, proxies_file, credentials, bearer, no_availability_check)
