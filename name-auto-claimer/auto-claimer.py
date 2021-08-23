@@ -32,8 +32,13 @@ def main(username: str, proxies_file: str, credentials: str, bearer: str):
 
     if not credentials is None:
         account = credentials.split(':')
-        email = account[0]
-        password = account[1]
+        if len(account) != 2:
+            message(
+                f'{Fore.LIGHTRED_EX}Accounts must be in the following format: "username:password".')
+            has_errors = True
+        else:
+            email = account[0]
+            password = account[1]
 
     if not exists(proxies_file):
         message(
