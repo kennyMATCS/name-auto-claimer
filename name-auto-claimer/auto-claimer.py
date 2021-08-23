@@ -61,37 +61,65 @@ def main(username: str, delay: int, proxies_file: str, credentials: str, bearer:
         return
 
     while True:
-        for proxy in proxies:
-            now = datetime.now()
-            current_time = now.strftime("%H:%M:%S")
+        if not no_availability_check:
+            for proxy in proxies:
+                now = datetime.now()
+                current_time = now.strftime("%H:%M:%S")
 
-            if is_available(username, proxy):
-                message(
-                    f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
+                if is_available(username, proxy):
+                    message(
+                        f'{Fore.LIGHTGREEN_EX}{username}{Fore.RESET} is available! ({current_time})')
 
-                print()
-
-                if bearer is None:
-                    bearer = authenticate(email, password)
-                    result: bool = change_name(username, bearer)
-                else:
-                    result: bool = create_profile(username, bearer)
-
-                if result:
-                    message(f'{Fore.LIGHTGREEN_EX}Changed name!')
-                else:
-                    message(f'{Fore.LIGHTRED_EX}Was not able to change name.')
                     print()
 
-                post_webhook(username)
+                    if bearer is None:
+                        bearer = authenticate(email, password)
+                        result: bool = change_name(username, bearer)
+                    else:
+                        result: bool = create_profile(username, bearer)
 
-                return
+                    if result:
+                        message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                    else:
+                        message(
+                            f'{Fore.LIGHTRED_EX}Was not able to change name.')
+                        print()
+
+                    post_webhook(username)
+
+                    return
+
+                else:
+                    message(
+                        f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
+
+                time.sleep(delay)
+        else:
+            if bearer is None:
+                current_time = int(time.time())
+
+                # after 20 hours we reset the bearer
+                end_time = current_time + (60 * 60 * 20)
+
+                bearer = authenticate(email, password)
+                while (int(time.time()) < end_time):
+                    result: bool = change_name(username, bearer)
+
+                    if result:
+                        message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                        return
+
+                    time.sleep(delay)
 
             else:
-                message(
-                    f'{Fore.LIGHTRED_EX}{username}{Fore.RESET} is not available. ({current_time})')
+                while True:
+                    result: bool = create_profile(username, bearer)
 
-            time.sleep(delay)
+                    if result:
+                        message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                        return
+
+                    time.sleep(delay)
 
 
 def message(message: str):
@@ -216,4 +244,5 @@ if __name__ == '__main__':
     bearer: str = args.bearer
     no_availability_check: bool = args.no_availability_check
 
-    main(username, proxies_file, credentials, bearer, no_availability_check)
+    main(username, delay, proxies_file,
+         credentials, bearer, no_availability_check)
