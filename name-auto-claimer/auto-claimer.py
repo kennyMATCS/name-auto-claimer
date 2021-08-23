@@ -107,6 +107,8 @@ def main(username: str, delay: int, proxies_file: str, credentials: str, bearer:
 
                     if result:
                         message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                        post_webhook(username)
+
                         return
 
                     time.sleep(delay)
@@ -117,6 +119,8 @@ def main(username: str, delay: int, proxies_file: str, credentials: str, bearer:
 
                     if result:
                         message(f'{Fore.LIGHTGREEN_EX}Changed name!')
+                        post_webhook(username)
+
                         return
 
                     time.sleep(delay)
