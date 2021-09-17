@@ -180,8 +180,12 @@ def create_profile(username: str, bearer: str) -> bool:
 
     json = {'profileName': f'{username}'}
 
-    response = requests.post(
-        f'https://api.minecraftservices.com/minecraft/profile/', headers=headers, json=json)
+    try:
+        response = requests.post(
+            f'https://api.minecraftservices.com/minecraft/profile/', headers=headers, json=json)
+    except Exception:
+        print(f'{Fore.LIGHTRED_EX}Exception given...')
+        return False
 
     print(response.text)
     print()
@@ -195,8 +199,12 @@ def change_name(username: str, bearer: str) -> bool:
     headers = {'Content-Type': 'application/json',
                'Authorization': f'Bearer {bearer}'}
 
-    response = requests.put(
-        f'https://api.minecraftservices.com/minecraft/profile/name/{username}', headers=headers)
+    try:
+        response = requests.put(
+            f'https://api.minecraftservices.com/minecraft/profile/name/{username}', headers=headers)
+    except Exception:
+        print(f'{Fore.LIGHTRED_EX}Exception given...')
+        return False
 
     print(response.text)
     print()
